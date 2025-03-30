@@ -21,10 +21,16 @@ namespace Lab2_PersonInfo.Models
 
         public Person(string firstName, string lastName, string email, DateTime birthDate)
         {
+            Thread.Sleep(2000);
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             BirthDate = birthDate;
+
+            if (BirthDate > DateTime.Today)
+                throw new ArgumentException("The selected date is in the future.");
+            if (CalculateAge(BirthDate) > 135)
+                throw new ArgumentException("The age entered is too high.");
 
             IsAdult = CalculateAge(BirthDate) >= 18;
             SunSign = GetWesternZodiacSign(BirthDate);
@@ -58,11 +64,12 @@ namespace Lab2_PersonInfo.Models
             return "Pisces";
         }
 
-        public static int CalculateAge(DateTime birthDate)
+        private static int CalculateAge(DateTime birthDate)
         {
             int age = DateTime.Today.Year - birthDate.Year;
             if (birthDate > DateTime.Today.AddYears(-age)) age--;
             return age;
         }
+
     }
 }
