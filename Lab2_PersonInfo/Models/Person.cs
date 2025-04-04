@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Lab1_BirthDateWindow.Models;
+using Lab2_PersonInfo.Exceptions;
 
 namespace Lab2_PersonInfo.Models
 {
@@ -24,18 +26,25 @@ namespace Lab2_PersonInfo.Models
             Thread.Sleep(2000);
             FirstName = firstName;
             LastName = lastName;
+
+            if (birthDate > DateTime.Today)
+                throw new BirthDateInFutureException();
+            if (CalculateAge(birthDate) > 135)
+                throw new TooHighAgeException();
+            if (!IsEmailValid(email))
+                throw new WrongEmailFormatException();
             Email = email;
             BirthDate = birthDate;
-
-            if (BirthDate > DateTime.Today)
-                throw new ArgumentException("The selected date is in the future.");
-            if (CalculateAge(BirthDate) > 135)
-                throw new ArgumentException("The age entered is too high.");
 
             IsAdult = CalculateAge(BirthDate) >= 18;
             SunSign = GetWesternZodiacSign(BirthDate);
             ChineseSign = ((ChineseZodiac)(BirthDate.Year % 12)).ToString();
             IsBirthday = BirthDate.Month == DateTime.Today.Month && BirthDate.Day == DateTime.Today.Day;
+        }
+
+        private static bool IsEmailValid(string email)
+        {
+            return Regex.IsMatch(email, @"^\w+@\w+$");
         }
 
         public Person(string firstName, string lastName, string email) :
